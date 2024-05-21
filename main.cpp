@@ -29,16 +29,24 @@ ideas:
 #include <vector>
 using namespace std;
 
+void firstRun();
 void terminal();
 void print(string, int);
 void insert(string);
 void edit(string);
 void newFile(string);
+int user();
 void help();
 
 int main() {
+    firstRun();
     terminal();
     return 0;
+}
+
+void firstRun() {
+    //this is where the user file will be created
+    //  (the file that holds all users)
 }
 
 void terminal() {
@@ -161,6 +169,19 @@ void help() {
          << "insert (fileName)" << endl
          << "print (fileName)\n" << endl;
     terminal();
+}
+
+int user() {
+    //File for users:
+    //admins will have regex: A-username (not case sensitive)
+    //standard users are    :   username (not case sensitive)
+
+
+    string uname, pass;
+    cout << "username: ";
+    getline(cin, uname);
+    cout << "password: ";
+    getline(cin, pass);
 }
 
 /*

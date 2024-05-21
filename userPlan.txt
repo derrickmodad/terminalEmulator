@@ -1,0 +1,35 @@
+need a way to create, edit, and delete users
+method for long-term storage will be text file (can worry about encryption later)
+
+option 1:
+    create a user class
+    class will have all the necessary member functions, 
+        and have required data (i.e. user, pass, privileges)
+
+option 2:
+    use a set of functions in the main program, like a pseudo-class
+    
+
+the true class seems like a more effective solution, but im not sure how to initialize the object in the actual program
+like, once a user object is declared, 
+
+idea: 
+have user file with list of all users
+user class member function parses for specific user
+load password into string
+prompt user for password
+user class member function compares string to input and returns true on accepted
+potentially global variable for logged in (not sure how to do this, definitely a better way)
+can use logged in (whatever way) to check for other options
+
+maybe terminal command can be login, (login derri) 
+then prompt for password
+which instantiates user object with parameter, (User signIn(derri))
+which parses file for said user name (derri)
+if user found in file  
+    compare passwords
+else
+    error message of incorrect user or pass
+
+im starting to think that a class may not be very useful here, and instead should just use a global var for privileges
+maybe a struct?
