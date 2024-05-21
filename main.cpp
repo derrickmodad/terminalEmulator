@@ -38,6 +38,8 @@ void newFile(string);
 int user();
 void help();
 
+string userName; //global variable so all functions can access the current user
+
 int main() {
     firstRun();
     terminal();
@@ -47,6 +49,24 @@ int main() {
 void firstRun() {
     //this is where the user file will be created
     //  (the file that holds all users)
+    //also where the main account will be loaded
+
+    ifstream check("userList.txt");
+    if (!check.good()) {
+        ofstream createUserFile("userList.txt");
+        createUserFile << "admin|admin";
+        createUserFile.close();
+        userName = "admin";
+    } else {
+        char c;
+        while (check.get(c)) {
+            if (c != '|')
+                userName.push_back(c);
+            else 
+                break;
+        }
+        check.close();
+    }
 }
 
 void terminal() {
@@ -54,15 +74,15 @@ void terminal() {
     cout << "terminal> ";
     getline(cin, input);
 
-    if (input.substr(0, 3) == "new") {
-        if (input.substr(4).length() < 1 || input[4] == ' ') {
+    if (input.substr(0, 3) == "new" || input == "new") {
+        if (input.length() == 4 || input[4] == ' ' || input.length() == 3) {
             cout << " -- please specify a filename: ";
             cin >> input;
             newFile(input);
         } else
             newFile(input.substr(4));
-    } else if (input.substr(0, 5) == "print") {
-        if (input.substr(6).length() < 1 || input[6] == ' ') {
+    } else if (input.substr(0, 5) == "print" || input == "print") {
+        if (input.length() == 6 || input[6] == ' ' || input.length() == 5) {
             cout << " -- please specify a filename: ";
             cin >> input;
             print(input, 0);
@@ -72,12 +92,15 @@ void terminal() {
         help();
     } else if (input.substr(0, 6) == "insert" || input == "insert") {
         if (input.length() == 7 || input[7] == ' ' || input.length() == 6) { //look at this, this shit is wack
-            cout << " -- please specify a filename: "; //something in this if is breaking the first iteration on the do while in insert
+            cout << " -- please specify a filename: ";
             cin >> input;
             cin.ignore();
             insert(input);
         } else
             insert(input.substr(7));
+    } else if (input == "whoami") {
+        cout << "user: " << userName << endl;
+        terminal();
     } else if (input == "exit") {
         cout << " -- exiting" << endl;
         exit(EXIT_SUCCESS);
@@ -96,6 +119,11 @@ void print(string fileName, int arg) {
         cout << " -- error printing file" << endl;
         terminal();
     } else {
+        getline(file, buffer);
+        if (buffer != userName) {
+            cout << " -- insufficient privileges to read document" << endl;
+            terminal();
+        }
         while (getline(file, buffer)) {
             if (arg)
                 cout << ++line << ". " << buffer << endl;
@@ -156,6 +184,7 @@ void newFile(string fileName) {
         cout << " -- error creating file" << endl;
         terminal();
     } else {
+        outputFile << userName;
         outputFile.close();
         cout << " -- " << fileName << " created" << endl;
         terminal();
@@ -167,7 +196,8 @@ void help() {
          << "------------------" << endl
          << "new (fileName)" << endl
          << "insert (fileName)" << endl
-         << "print (fileName)\n" << endl;
+         << "print (fileName)" << endl
+         << "exit\n" << endl;
     terminal();
 }
 
@@ -182,6 +212,9 @@ int user() {
     getline(cin, uname);
     cout << "password: ";
     getline(cin, pass);
+
+
+    return 1;
 }
 
 /*
