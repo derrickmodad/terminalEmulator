@@ -23,6 +23,11 @@ ideas:
 //  date completed
 
 
+add a validating function template so all input can be validated
+    i.e. usernames can have spaces put within them and after them so they will technically be new users
+    make a validating tool that prevents this
+
+
 */
 
 #include <iostream>
@@ -38,9 +43,12 @@ void insert(string);
 void edit(string);
 void newFile(string);
 int user();
+void createUser(string, int);
 void help();
+void daemonLog();
 
 string userName; //global variable so all functions can access the current user
+bool isAdmin;
 
 int main() {
     firstRun();
@@ -56,9 +64,10 @@ void firstRun() {
     ifstream check("userList.txt");
     if (!check.good()) {
         ofstream createUserFile("userList.txt");
-        createUserFile << "admin|admin";
+        createUserFile << "S-admin|admin";
         createUserFile.close();
         userName = "admin";
+        isAdmin = true;
     } else {
         char c;
         while (check.get(c)) {
@@ -100,6 +109,12 @@ void terminal() {
             insert(input);
         } else
             insert(input.substr(7));
+    } else if (input.substr(0, 11) == "create user" || input == "create user") {
+        if (input.length() == 12 || input[12] == ' ' || input.length() == 11) {
+            createUser("fill", 0);
+        } else {
+            createUser(input.substr(12), 1); 
+        }
     } else if (input == "whoami") {
         cout << "user: " << userName << endl;
         terminal();
@@ -156,9 +171,9 @@ void insert(string fileName) {
     do {
         cout << "i: ";    
         getline(cin, buffer);
-        if (buffer != "wq")
+        if (buffer != ":wq")
             content.push_back(buffer);
-    } while (buffer != "wq");
+    } while (buffer != ":wq");
 
     //something here to allow user to exit insert without saving
 
@@ -203,10 +218,41 @@ void help() {
     terminal();
 }
 
+void createUser(string uName, int fromMain) {
+    if (!fromMain) {
+        cout << " -- please specify a username: ";
+        getline(cin, uName);
+    }
+
+    ifstream fromUserList("userList.txt");
+    string buffer;
+    vector<string> users;
+
+    if (!fromUserList.good()) {
+        cout << " -- error creating user" << endl;
+        terminal();
+    }
+
+    while (getline(fromUserList, buffer)) {
+        users.push_back(buffer);
+    }
+
+    //something here for checking if username has already been used
+
+    //then if passing, prompt for password
+
+    //then append to file
+
+
+    //fromUserList.clear();  //clears eof marker
+    //fromUserList.seekg(0); //reset stream position to beginning of file
+
+}
+
 int user() {
     //File for users:
     //admins will have regex: A-username (not case sensitive)
-    //standard users are    :   username (not case sensitive)
+    //standard users are    : S-username (not case sensitive)
 
 
     string uname, pass;
@@ -218,58 +264,3 @@ int user() {
 
     return 1;
 }
-
-/*
-old code because idk if i should delete it:
-
-if (input.length() > 1) {
-        if (input.substr(0, 3) == "new") {
-            if (input.substr(4).length() < 1 || input[4] == ' ') {
-                cout << "please specify a filename: ";
-                cin >> input;
-                newFile(input);
-            } else
-                newFile(input.substr(4));
-        } else if (input.substr(0, 5) == "print") {
-            if (input.substr(6).length() < 1 || input[6] == ' ') {
-                cout << "please specify a filename: ";
-                cin >> input;
-                print(input);
-            } else
-                print(input.substr(6));
-        } else if (input == "help") {
-
-        }
-    } else {
-        switch (toupper(input[0])) {
-            case 'W':
-                break;
-            case 'I':
-                break;
-            case 'E':
-                break;                
-            default:
-                cout << "unrecognized command - type \"help\" for a list of commands" << endl;
-                terminal();
-                break;
-        }
-    }
-
-    while (s == 'I' || s == 'i') {
-            cout << "insert: " ;
-            getline(cin, input);
-            if (input == "" || input == "W") {
-                s = 't';
-                file.open("test.txt");
-                if (file.good()) {
-                    cout << "saving..." << endl;
-                    for (auto i : output)
-                        file << i << endl;
-                    file.close();
-                    cout << "save successful !" << endl;
-                } else 
-                    cout << "error !" << endl;
-            } else
-                output.push_back(input);
-    }
-*/
